@@ -1,0 +1,35 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Web Chat</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script>
+        var name; // Variable to store the client's name
+
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+        socket.on('connect', function() {
+            name = prompt('Enter your name:');
+            socket.send(name + ' has connected.');
+        });
+
+        socket.on('message', function(data) {
+            var p = document.createElement('p');
+            p.innerHTML = data.name + ': ' + data.message;
+            document.querySelector('#chat').appendChild(p);
+        });
+
+        function sendMessage() {
+            var message = document.querySelector('#message').value;
+            socket.send({ name: name, message: message });
+            document.querySelector('#message').value = '';
+        }
+    </script>
+</head>
+<body>
+    <div id="chat"></div>
+    <input type="text" id="message" />
+    <button onclick="sendMessage()">Send</button>
+</body>
+</html>
